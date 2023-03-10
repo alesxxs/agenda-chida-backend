@@ -4,10 +4,11 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: "containers-us-west-192.railway.app",
+  port: 6317,
+  user: "root",
+  password: "xl6zMnZtvr3oFiwYO9BW",
+  database: "railway",
 });
 
 module.exports = db;

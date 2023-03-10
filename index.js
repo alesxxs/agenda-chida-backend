@@ -23,10 +23,11 @@ app.use(cors());
 
 // Configuración de la conexión a la base de datos
 const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: "containers-us-west-192.railway.app",
+  port: 6317,
+  user: "root",
+  password: "xl6zMnZtvr3oFiwYO9BW",
+  database: "railway",
 });
 
 const secretKey = process.env.JWT_SECRET;
@@ -64,12 +65,13 @@ app.post("/login", (req, res) => {
   }
 
   db.query(
-    `SELECT * FROM accesskeys WHERE username = ?`,
+    `SELECT * FROM accessKeys WHERE username = ?`,
     [user],
 
     (err, results) => {
       if (err) {
         console.log(err);
+
         return res.status(500).json({ message: "Server error" });
       }
 
@@ -114,7 +116,7 @@ app.post("/appointments", (req, res) => {
   } = req.body;
 
   const sqlInsert =
-    "INSERT INTO clientsrequeriments(name, lastName, initialDate, initialTime, finishTime, anticipo, image, finalPrice, phoneNumber, instagram, service, notes, attended, id_clientsRequeriments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    "INSERT INTO clientsRequeriments(name, lastName, initialDate, initialTime, finishTime, anticipo, image, finalPrice, phoneNumber, instagram, service, notes, attended, id_clientsRequeriments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
   db.query(
     sqlInsert,
@@ -156,7 +158,7 @@ app.post("/appointments-today", (req, res) => {
   //   "INSERT INTO clientsrequeriments(name, lastName, initialDate, initialTime, finishTime, anticipo, image, finalPrice, phoneNumber, instagram, service, notes, attended, id_clientsRequeriments) VALUES (?, ?, ?, ?, ?, ?, null, ?, ?, ?, ?, ?, ?, ?)";
 
   const sqlInsert =
-    "SELECT * FROM clientsrequeriments WHERE id_clientsRequeriments = ? AND attended IS NULL AND initialDate = CURDATE() ORDER BY TIME(initialTime) ASC;";
+    "SELECT * FROM clientsRequeriments WHERE id_clientsRequeriments = ? AND attended IS NULL AND initialDate = CURDATE() ORDER BY TIME(initialTime) ASC;";
 
   db.query(
     sqlInsert,
@@ -178,7 +180,7 @@ app.post("/isAttended", (req, res) => {
     req.body;
 
   const sqlInsert =
-    "UPDATE clientsrequeriments SET attended = ? WHERE id_clientsRequeriments = ? AND id = ?;";
+    "UPDATE clientsRequeriments SET attended = ? WHERE id_clientsRequeriments = ? AND id = ?;";
 
   db.query(
     sqlInsert,
@@ -276,7 +278,7 @@ app.post("/admAppointment", (req, res) => {
   const { id_clientsRequeriments } = req.body;
 
   const sqlGet =
-    "SELECT * FROM clientsrequeriments WHERE id_clientsRequeriments = ? AND attended IS NULL AND initialDate >= CURDATE() ORDER BY initialDate ASC, initialTime ASC;";
+    "SELECT * FROM clientsRequeriments WHERE id_clientsRequeriments = ? AND attended IS NULL AND initialDate >= CURDATE() ORDER BY initialDate ASC, initialTime ASC;";
 
   db.query(sqlGet, [id_clientsRequeriments], (err, results) => {
     if (err) {
@@ -293,7 +295,7 @@ app.delete("/deleteAppointments", (req, res) => {
 
   const placeholders = ids.map(() => "?").join(", ");
 
-  const sqlGet = `DELETE FROM clientsrequeriments WHERE id IN (${placeholders}) AND id_clientsRequeriments = ? `;
+  const sqlGet = `DELETE FROM clientsRequeriments WHERE id IN (${placeholders}) AND id_clientsRequeriments = ? `;
 
   db.query(sqlGet, [...ids, id_clientsRequeriments], (err, results) => {
     if (err) {
@@ -325,7 +327,7 @@ app.put("/editAppointments", (req, res) => {
   } = req.body;
 
   const sqlInsert =
-    "UPDATE clientsrequeriments SET name = ?, lastName = ?, initialDate = ?, initialTime = ?, finishTime = ?, anticipo = ?, image = ?, finalPrice = ?, phoneNumber = ?, instagram = ?, service = ?, notes = ?, attended = ? WHERE id = ?;";
+    "UPDATE clientsRequeriments SET name = ?, lastName = ?, initialDate = ?, initialTime = ?, finishTime = ?, anticipo = ?, image = ?, finalPrice = ?, phoneNumber = ?, instagram = ?, service = ?, notes = ?, attended = ? WHERE id = ?;";
 
   db.query(
     sqlInsert,
